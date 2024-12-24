@@ -1,176 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR Marker Viewer</title>
-    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <meta name="viewport" content="width=device-width">
+    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <style>
-        .ui-controls {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1000;
-            background: rgba(0,0,0,0.7);
-            padding: 10px;
-            border-radius: 10px;
-            display: flex;
-            gap: 10px;
+        body {
+            margin: 0;
         }
-
-        button {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 5px;
-            background: #ffffff;
-            color: #000000;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .loading {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.8);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            display: none;
+        .a-enter-vr {
+            display: none !important;
         }
     </style>
 </head>
-<body style="margin: 0; overflow: hidden;">
-    <div class="loading" id="loading">Loading AR Content...</div>
-    <div class="ui-controls">
-        <button onclick="toggleModel()">Toggle Model</button>
-        <button onclick="scaleUp()">Scale +</button>
-        <button onclick="scaleDown()">Scale -</button>
-        <button onclick="rotateModel()">Rotate</button>
-    </div>
-
-    <a-scene 
-        embedded
-        arjs='sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;'
-        renderer="logarithmicDepthBuffer: true;"
-        vr-mode-ui="enabled: false">
-
-        <a-assets>
-            <a-asset-item id="model" src="path-to-your-3d-model.glb"></a-asset-item>
-        </a-assets>
-
-        <!-- Custom marker pattern -->
-        <a-marker 
-            type='pattern' 
-            url='path-to-your-marker-pattern.patt'
-            smooth="true"
-            smoothCount="10"
-            smoothTolerance="0.01"
-            smoothThreshold="5"
-            raycaster="objects: .clickable"
-            emitevents="true"
-            cursor="fuse: false; rayOrigin: mouse;">
-
+<body>
+    <a-scene embedded arjs='sourceType: webcam;' vr-mode-ui="enabled: false">
+        <a-marker-camera id="marker" preset="hiro">
             <a-entity
-                id="model-container"
+                id="myModel"
                 position="0 0 0"
-                rotation="0 0 0"
-                scale="1 1 1">
-                
-                <a-entity 
-                    gltf-model="#model"
-                    class="clickable"
-                    scale="0.1 0.1 0.1"
-                    rotation="0 0 0"
-                    animation-mixer>
-                </a-entity>
+                scale="0.05 0.05 0.05"
+                gltf-model="https://raw.githack.com/AR-js-org/AR.js/master/aframe/examples/image-tracking/nft/trex/scene.gltf"
+                visible="false">
             </a-entity>
-        </a-marker>
-
-        <a-entity camera></a-entity>
+        </a-marker-camera>
     </a-scene>
 
     <script>
-        let isModelVisible = true;
-        let currentScale = 0.1;
-        let currentRotation = 0;
-        const modelContainer = document.querySelector('#model-container');
-        const loadingElement = document.getElementById('loading');
+        const marker = document.getElementById('marker');
+        const model = document.getElementById('myModel');
 
-        // Show loading screen when starting
-        window.addEventListener('load', () => {
-            loadingElement.style.display = 'block';
-            setTimeout(() => {
-                loadingElement.style.display = 'none';
-            }, 3000);
+
+        marker.addEventListener('markerFound', function() {
+            // 获取当前 GPS 位置（假设已经获取到位置）
+            model.setAttribute('visible', 'true');
         });
 
-        // Model visibility toggle
-        function toggleModel() {
-            isModelVisible = !isModelVisible;
-            modelContainer.setAttribute('visible', isModelVisible);
-        }
-
-        // Scale controls
-        function scaleUp() {
-            currentScale += 0.05;
-            updateScale();
-        }
-
-        function scaleDown() {
-            if (currentScale > 0.05) {
-                currentScale -= 0.05;
-                updateScale();
-            }
-        }
-
-        function updateScale() {
-            modelContainer.setAttribute('scale', `${currentScale} ${currentScale} ${currentScale}`);
-        }
-
-        // Rotation control
-        function rotateModel() {
-            currentRotation += 45;
-            modelContainer.setAttribute('rotation', `0 ${currentRotation} 0`);
-        }
-
-        // Marker detection events
-        const marker = document.querySelector('a-marker');
-        
-        marker.addEventListener('markerFound', () => {
-            console.log('Marker Found');
-            // Add your custom marker detection logic here
+        marker.addEventListener('markerLost', function() {
+            // 保持模型可见，但可以选择在一定条件下隐藏
         });
-
-        marker.addEventListener('markerLost', () => {
-            console.log('Marker Lost');
-            // Add your custom marker lost logic here
-        });
-
-        // Error handling
-        window.addEventListener('error', function(event) {
-            console.error('AR Error:', event.error);
-            loadingElement.textContent = 'Error loading AR content. Please refresh.';
-            loadingElement.style.display = 'block';
-        });
-
-        // Device orientation permission handling for iOS
-        if (typeof DeviceOrientationEvent !== 'undefined' && 
-            typeof DeviceOrientationEvent.requestPermission === 'function') {
-            document.body.addEventListener('click', async () => {
-                try {
-                    const response = await DeviceOrientationEvent.requestPermission();
-                    if (response === 'granted') {
-                        console.log('Device orientation permissions granted');
-                    }
-                } catch (error) {
-                    console.error('Error requesting device orientation permission:', error);
-                }
-            }, { once: true });
-        }
     </script>
 </body>
 </html>
