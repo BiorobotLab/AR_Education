@@ -2,9 +2,34 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <title>BioLab AR Demonstration</title>
     <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/aframe-text-geometry-component@^0.5.0/dist/aframe-text-geometry-component.min.js"></script>
+
+    <script>
+        /** @type {import('aframe')} */
+        /* global AFRAME */
+        
+        // 注册浮动动画组件
+        AFRAME.registerComponent('float-animation', {
+            init: function() {
+                this.originalY = this.el.getAttribute('position').y;
+            },
+            tick: function(time) {
+                if (this.el.getAttribute('visible')) {
+                    const newY = this.originalY + Math.sin(time * 0.001) * 0.05;
+                    const currentPosition = this.el.getAttribute('position');
+                    this.el.setAttribute('position', {
+                        x: currentPosition.x,
+                        y: newY,
+                        z: currentPosition.z
+                    });
+                }
+            }
+        });
+    </script>
 
     <style>
         body {
@@ -15,31 +40,86 @@
         }
     </style>
 </head>
+
 <body>
-    <a-scene embedded arjs='sourceType: webcam;' vr-mode-ui="enabled: false">
-        <a-marker-camera id="marker" preset="hiro">
+    <a-scene embedded arjs='trackingMethod: best; sourceType: webcam; debugUIEnabled: true;'
+        vr-mode-ui="enabled: false">
+
+        <a-marker preset="pattern" type="pattern" id="markerSB" url="./patterns/surgery_bed.patt">
+        <!-- <a-marker preset="hiro"> -->
+
             <a-entity
-                id="myModel"
+                id="surgery_bed_Model"
                 position="0 0 0"
                 scale="0.05 0.05 0.05"
-                gltf-model="https://raw.githack.com/AR-js-org/AR.js/master/aframe/examples/image-tracking/nft/trex/scene.gltf"
+                gltf-model="./models/surgery_bed.gltf">
+            </a-entity>
+
+            <a-entity
+                id="introSB"
+                position="0 1.5 0"
+                rotation="-90 0 0"
+                text="value: This is introduction of surgery bed; 
+                      width: 2;
+                      color: white;
+                      align: center;
+                      baseline: center;
+                      wrapCount: 20;
+                      opacity: 0.9"
                 visible="false">
             </a-entity>
-        </a-marker-camera>
+
+            <a-plane
+                id="introSB_background"
+                position="0 1.5 -0.01"
+                rotation="-90 0 0"
+                width="2.2"
+                height="1"
+                color="#000"
+                opacity="0.5"
+                visible="false">
+            </a-plane>
+        </a-marker>
+        <a-entity camera></a-entity camera>
     </a-scene>
 
-    <script>
-        const marker = document.getElementById('marker');
-        const model = document.getElementById('myModel');
+    <script>        
+        window.addEventListener('load', function() {
+            let introSBVisible = false;
+            const modelSB = document.getElementById('surgery_bed_Model');
+            const introSB = document.getElementById('introSB');
+            const introSB_bg = document.getElementById('introSB_background');
+            const markerSB = document.getElementById("markerSB");
+            
+            function setVisible(visible) {
+                introSB.setAttribute('visible', visible);
+                introSB_bg.setAttribute('visible', visible);
+            }
+            
+            if (modelSB && introSB && introSB_bg && markerSB) {
+                modelSB.addEventListener('click', function() {
+                    introSBVisible = !introSBVisible;
+                    setVisible(introSBVisible);
+                });
 
+                markerSB.addEventListener('markerFound', () => {
+                    console.log('Marker found');
+                });
 
-        marker.addEventListener('markerFound', function() {
-            model.setAttribute('visible', 'true');
+                markerSB.addEventListener('markerLost', () => {
+                    console.log('Marker lost');
+                    introSBVisible = false;
+                    setVisible(introSBVisible);
+                });
+
+                introSB_bg.setAttribute('float-animation', '');
+            }
         });
+        
+        document.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+        }, {passive: false});
 
-        marker.addEventListener('markerLost', function() {
-            // 保持模型可见，但可以选择在一定条件下隐藏
-        });
     </script>
 </body>
 </html>
