@@ -45,20 +45,15 @@
     <a-scene embedded arjs='trackingMethod: best; sourceType: webcam; debugUIEnabled: true;'
         vr-mode-ui="enabled: false">
 
-<!--         <a-assets>
-            <a-asset-item id="assetSB" src="./models/surgery_bed.gltf"></a-asset-item>
-        </a-assets> -->
-
         <a-marker preset="pattern" type="pattern" id="markerSB" url="./patterns/surgery_bed.patt">
         <!-- <a-marker preset="hiro"> -->
 
-            
 
             <a-entity
                 id="surgery_bed_Model"
                 position="0 0 0"
-                scale="0.05 0.05 0.05"
-                gltf-model="./models/surgery_bed.gltf">
+                scale="0.005 0.005 0.005"
+                gltf-model="url(models/surgery_bed.gltf)">
             </a-entity>
 
             <a-entity
@@ -75,11 +70,11 @@
                 visible="false">
             </a-entity>
 
-            <a-entity
+            <!-- <a-entity
                 position="0 0 0"
                 scale="0.05 0.05 0.05"
                 gltf-model="https://raw.githack.com/AR-js-org/AR.js/master/aframe/examples/image-tracking/nft/trex/scene.gltf"
-            ></a-entity>
+            ></a-entity> -->
 
             <a-plane
                 id="introSB_background"
