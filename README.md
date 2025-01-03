@@ -4,9 +4,9 @@ Educational use AR platform developed with **AR.js** framework
 
 **Marker**
 
-Surgery Bed
 ![image](https://github.com/user-attachments/assets/747394bc-70ae-4de8-a577-8db457e655cc)
 
+Surgery Bed
 
 **Digital Ocean**
 Linked with Github repository(Auto update when committed)
