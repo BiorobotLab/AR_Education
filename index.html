@@ -43,7 +43,8 @@
 
 <body>
     <a-scene embedded arjs='trackingMethod: best; sourceType: webcam; debugUIEnabled: true;'
-        vr-mode-ui="enabled: false">
+        vr-mode-ui="enabled: false"
+        renderer="logarithmicDepthBuffer: true">
 
         <a-marker preset="pattern" type="pattern" id="markerSB" url="./patterns/surgery_bed.patt">
         <!-- <a-marker preset="hiro"> -->
@@ -52,7 +53,7 @@
             <a-entity
                 id="surgery_bed_Model"
                 position="0 0 0"
-                scale="0.005 0.005 0.005"
+                scale="0.0002 0.0002 0.0002"
                 gltf-model="url(models/surgery_bed.gltf)">
             </a-entity>
 
@@ -93,7 +94,8 @@
         <a-entity camera></a-entity camera>
     </a-scene>
 
-    <script>        
+    <script>
+
         window.addEventListener('load', function() {
             let introSBVisible = false;
             const modelSB = document.getElementById('surgery_bed_Model');
@@ -107,9 +109,15 @@
             }
             
             if (modelSB && introSB && introSB_bg && markerSB) {
+                // 监听模型加载完成事件
+                modelSB.addEventListener('model-loaded', () => {
+                    console.log('Surgery bed model loaded successfully.');
+                });
+
                 modelSB.addEventListener('click', function() {
                     introSBVisible = !introSBVisible;
                     setVisible(introSBVisible);
+                    console.log('IntroSB visibility toggled:', introSBVisible);
                 });
 
                 markerSB.addEventListener('markerFound', () => {
@@ -130,6 +138,57 @@
             e.preventDefault();
         }, {passive: false});
 
+        // 自定义组件：模型持久化
+        AFRAME.registerComponent('persistent-model', {
+            schema: {
+                modelUrl: { type: 'string' },
+                scale: { type: 'vec3', default: { x: 1, y: 1, z: 1 } }
+            },
+            init: function() {
+                const el = this.el;
+                const modelUrl = this.data.modelUrl;
+                const scale = this.data.scale;
+
+                // 加载模型
+                new THREE.GLTFLoader().load(modelUrl, (gltf) => {
+                    this.model = gltf.scene;
+                    this.model.scale.set(scale.x, scale.y, scale.z);
+                    el.setObject3D('mesh', this.model);
+
+                    // 首次加载时记录位置（模拟标记点初始化）
+                    if (!localStorage.getItem('modelMatrix')) {
+                        const matrix = new THREE.Matrix4().compose(
+                            new THREE.Vector3(0, 0, -1), // 默认位置：摄像头前方1米
+                            new THREE.Quaternion(),
+                            new THREE.Vector3(1, 1, 1)
+                        );
+                        localStorage.setItem('modelMatrix', JSON.stringify(matrix.elements));
+                    }
+
+                    // 从缓存恢复位置
+                    const savedMatrix = JSON.parse(localStorage.getItem('modelMatrix'));
+                    this.model.applyMatrix4(new THREE.Matrix4().fromArray(savedMatrix));
+                });
+            },
+            tick: function() {
+                // 持续更新模型位置（基于SLAM的相机位移）
+                if (this.model) {
+                    const camera = document.querySelector('[camera]').object3D;
+                    const inverseMatrix = new THREE.Matrix4().copy(camera.matrixWorld).invert();
+                    this.model.position.applyMatrix4(inverseMatrix);
+                }
+            }
+        });
+
+        // 自定义组件：SLAM标记替代
+        AFRAME.registerComponent('slam-marker', {
+            init: function() {
+                const sceneEl = this.el.sceneEl;
+                sceneEl.addEventListener('arjs-video-loaded', () => {
+                    console.log('SLAM环境已初始化');
+                });
+            }
+        });
     </script>
 </body>
 </html>
