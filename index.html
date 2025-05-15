@@ -9,24 +9,75 @@
     <script src="https://unpkg.com/aframe-text-geometry-component@^0.5.0/dist/aframe-text-geometry-component.min.js"></script>
 
     <script>
-        /** @type {import('aframe')} */
-        /* global AFRAME */
-        
-        // 注册浮动动画组件
-        AFRAME.registerComponent('float-animation', {
-            init: function() {
-                this.originalY = this.el.getAttribute('position').y;
+        // 全局状态管理
+        const ARState = {
+            model_load: null,
+            space_coord: null,
+            knownMarkers: new Map() // 存储已知标记的空间坐标
+        };
+
+        // 注册空间锚点组件
+        AFRAME.registerComponent('spatial-anchor', {
+            schema: {
+                markerId: { type: 'string' }
             },
-            tick: function(time) {
-                if (this.el.getAttribute('visible')) {
-                    const newY = this.originalY + Math.sin(time * 0.001) * 0.05;
-                    const currentPosition = this.el.getAttribute('position');
-                    this.el.setAttribute('position', {
-                        x: currentPosition.x,
-                        y: newY,
-                        z: currentPosition.z
+            init: function() {
+                this.el.addEventListener('markerFound', (e) => {
+                    const markerId = this.data.markerId;
+                    const currentPos = this.el.getAttribute('position');
+                    
+                    if (!ARState.knownMarkers.has(markerId)) {
+                        // 新标记首次识别
+                        ARState.knownMarkers.set(markerId, {
+                            position: currentPos,
+                            rotation: this.el.getAttribute('rotation'),
+                            scale: this.el.getAttribute('scale')
+                        });
+                        console.log(`New marker ${markerId} registered at`, currentPos);
+                    } else {
+                        // 已知标记更新位置
+                        const recordedPos = ARState.knownMarkers.get(markerId);
+                        const distance = this.calculateDistance(currentPos, recordedPos.position);
+                        
+                        if (distance > 0.5) { // 位置变化阈值
+                            ARState.knownMarkers.set(markerId, {
+                                position: currentPos,
+                                rotation: this.el.getAttribute('rotation'),
+                                scale: this.el.getAttribute('scale')
+                            });
+                            console.log(`Marker ${markerId} position updated`);
+                        }
+                    }
+
+                    ARState.space_coord = ARState.knownMarkers.get(markerId);
+                });
+            },
+            calculateDistance: function(pos1, pos2) {
+                return Math.sqrt(
+                    Math.pow(pos1.x - pos2.x, 2) +
+                    Math.pow(pos1.y - pos2.y, 2) +
+                    Math.pow(pos1.z - pos2.z, 2)
+                );
+            }
+        });
+
+        // 修改场景初始化
+        AFRAME.registerComponent('scene-persistence', {
+            init: function() {
+                this.el.addEventListener('loaded', () => {
+                    ARState.model_load = null;
+                    ARState.space_coord = null;
+                    
+                    // 启用SLAM模式
+                    this.el.setAttribute('arjs', {
+                        trackingMethod: 'best',
+                        sourceType: 'webcam',
+                        debugUIEnabled: false,
+                        positionalTracking: true // 启用位置追踪
                     });
-                }
+                    
+                    console.log('AR scene initialized with SLAM');
+                });
             }
         });
     </script>
@@ -53,11 +104,7 @@
             <a-entity
                 id="surgery_bed_Model"
                 position="0 0 0"
-<<<<<<< HEAD
                 scale="0.0002 0.0002 0.0002"
-=======
-                scale="0.002 0.002 0.002"
->>>>>>> 4c68cbb3a35ae6171458bc6d65af8c27f4deb636
                 gltf-model="url(models/surgery_bed.gltf)">
             </a-entity>
 
