@@ -7,80 +7,7 @@
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://unpkg.com/aframe-text-geometry-component@^0.5.0/dist/aframe-text-geometry-component.min.js"></script>
-
-    <script>
-        // 全局状态管理
-        const ARState = {
-            model_load: null,
-            space_coord: null,
-            knownMarkers: new Map() // 存储已知标记的空间坐标
-        };
-
-        // 注册空间锚点组件
-        AFRAME.registerComponent('spatial-anchor', {
-            schema: {
-                markerId: { type: 'string' }
-            },
-            init: function() {
-                this.el.addEventListener('markerFound', (e) => {
-                    const markerId = this.data.markerId;
-                    const currentPos = this.el.getAttribute('position');
-                    
-                    if (!ARState.knownMarkers.has(markerId)) {
-                        // 新标记首次识别
-                        ARState.knownMarkers.set(markerId, {
-                            position: currentPos,
-                            rotation: this.el.getAttribute('rotation'),
-                            scale: this.el.getAttribute('scale')
-                        });
-                        console.log(`New marker ${markerId} registered at`, currentPos);
-                    } else {
-                        // 已知标记更新位置
-                        const recordedPos = ARState.knownMarkers.get(markerId);
-                        const distance = this.calculateDistance(currentPos, recordedPos.position);
-                        
-                        if (distance > 0.5) { // 位置变化阈值
-                            ARState.knownMarkers.set(markerId, {
-                                position: currentPos,
-                                rotation: this.el.getAttribute('rotation'),
-                                scale: this.el.getAttribute('scale')
-                            });
-                            console.log(`Marker ${markerId} position updated`);
-                        }
-                    }
-
-                    ARState.space_coord = ARState.knownMarkers.get(markerId);
-                });
-            },
-            calculateDistance: function(pos1, pos2) {
-                return Math.sqrt(
-                    Math.pow(pos1.x - pos2.x, 2) +
-                    Math.pow(pos1.y - pos2.y, 2) +
-                    Math.pow(pos1.z - pos2.z, 2)
-                );
-            }
-        });
-
-        // 修改场景初始化
-        AFRAME.registerComponent('scene-persistence', {
-            init: function() {
-                this.el.addEventListener('loaded', () => {
-                    ARState.model_load = null;
-                    ARState.space_coord = null;
-                    
-                    // 启用SLAM模式
-                    this.el.setAttribute('arjs', {
-                        trackingMethod: 'best',
-                        sourceType: 'webcam',
-                        debugUIEnabled: false,
-                        positionalTracking: true // 启用位置追踪
-                    });
-                    
-                    console.log('AR scene initialized with SLAM');
-                });
-            }
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
 
     <style>
         body {
@@ -89,157 +16,201 @@
         .a-enter-vr {
             display: none !important;
         }
+
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+        #loading-message {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+        #loading-progress {
+            width: 50%;
+            max-width: 300px;
+            height: 10px;
+            background: #333;
+            margin-top: 20px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        #loading-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: #4CAF50;
+            transition: width 0.3s ease;
+        }
     </style>
 </head>
 
 <body>
-    <a-scene embedded arjs='trackingMethod: best; sourceType: webcam; debugUIEnabled: true;'
-        vr-mode-ui="enabled: false"
-        renderer="logarithmicDepthBuffer: true">
+    <!-- <div id="permission-screen" style="position: fixed; top: 0; left: 0; width: 100%;
+        height: 100%; background: rgba(0,0,0,0.9); color: white; display: flex; flex-direction: column;
+        justify-content: center; align-items: center; z-index: 10000;">
+        <h2>需要摄像头权限</h2>
+        <p>请允许访问摄像头以使用AR功能</p>
+        <button id="request-permission-btn" style="
+            padding: 12px 24px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            margin-top: 20px;
+        ">允许摄像头访问</button>
+        <p id="permission-error" style="color: #ff5252; margin-top: 15px;"></p>
+    </div>
 
-        <a-marker preset="pattern" type="pattern" id="markerSB" url="./patterns/surgery_bed.patt">
-        <!-- <a-marker preset="hiro"> -->
+    <div id="loading-screen">
+        <h2>Initializing AR Environment</h2>
+        <div id="loading-message">Requesting camera access...</div>
+        <div id="loading-progress">
+            <div id="loading-progress-bar"></div>
+        </div>
+    </div> -->
 
+    <a-scene embedded
+        arjs='trackingMethod: best; sourceType: webcam; sourceWidth: 1920;
+        sourceHeight: 1080; frameRate: 60; displayWidth: window.innerWidth;
+        displayHeight: window.innerHeight; detectionMode: mono_and_matrix; matrixCodeType: 3x3;'
+        vr-mode-ui="enabled: false">
+
+        <a-marker preset="pattern" type="pattern" id="Front" 
+            url="./patterns/Front.patt">
 
             <a-entity
-                id="surgery_bed_Model"
+                id="F"
                 position="0 0 0"
-                scale="0.0002 0.0002 0.0002"
-                gltf-model="url(models/surgery_bed.gltf)">
-            </a-entity>
-
-            <a-entity
-                id="introSB"
-                position="0 1.5 0"
-                rotation="-90 0 0"
-                text="value: This is introduction of surgery bed; 
-                      width: 2;
-                      color: white;
-                      align: center;
-                      baseline: center;
-                      wrapCount: 20;
-                      opacity: 0.9"
+                scale="0.001 0.001 0.001"
+                gltf-model="url(models/surgery_bed.gltf)"
                 visible="false">
             </a-entity>
 
-            <!-- <a-entity
-                position="0 0 0"
-                scale="0.05 0.05 0.05"
-                gltf-model="https://raw.githack.com/AR-js-org/AR.js/master/aframe/examples/image-tracking/nft/trex/scene.gltf"
-            ></a-entity> -->
-
-            <a-plane
-                id="introSB_background"
-                position="0 1.5 -0.01"
-                rotation="-90 0 0"
-                width="2.2"
-                height="1"
-                color="#000"
-                opacity="0.5"
-                visible="false">
-            </a-plane>
         </a-marker>
 
+        <a-marker preset="pattern" type="pattern" id="Left" 
+            url="./patterns/Left.patt">
 
+            <a-entity
+                id="L"
+                position="0 0 0"
+                rotation="0 90 0"
+                scale="0.001 0.001 0.001"
+                gltf-model="url(models/surgery_bed.gltf)"
+                visible="false">
+            </a-entity>
+
+        </a-marker>
+
+        <a-marker preset="pattern" type="pattern" id="Right" 
+            url="./patterns/Right.patt">
+
+            <a-entity
+                id="R"
+                position="0 0 0"
+                rotation="0 270 0"
+                scale="0.001 0.001 0.001"
+                gltf-model="url(models/surgery_bed.gltf)"
+                visible="false">
+            </a-entity>
+
+        </a-marker>
+
+        <a-marker preset="pattern" type="pattern" id="Back" 
+            url="./patterns/Back.patt">
+
+            <a-entity
+                id="B"
+                position="0 0 0"
+                rotation="0 180 0"
+                scale="0.001 0.001 0.001"
+                gltf-model="url(models/surgery_bed.gltf)"
+                visible="false">
+            </a-entity>
+
+        </a-marker>
 
         <a-entity camera></a-entity camera>
     </a-scene>
 
+
     <script>
-
-        window.addEventListener('load', function() {
-            let introSBVisible = false;
-            const modelSB = document.getElementById('surgery_bed_Model');
-            const introSB = document.getElementById('introSB');
-            const introSB_bg = document.getElementById('introSB_background');
-            const markerSB = document.getElementById("markerSB");
+        document.querySelector('a-scene').addEventListener('loaded', function() {
+            const marker = document.querySelector('a-marker');
             
-            function setVisible(visible) {
-                introSB.setAttribute('visible', visible);
-                introSB_bg.setAttribute('visible', visible);
-            }
-            
-            if (modelSB && introSB && introSB_bg && markerSB) {
-                // 监听模型加载完成事件
-                modelSB.addEventListener('model-loaded', () => {
-                    console.log('Surgery bed model loaded successfully.');
+            const markers = [
+                { id: "Front", model: "F" },
+                { id: "Left", model: "L" },
+                { id: "Right", model: "R" },
+                { id: "Back", model: "B" }
+            ];
+
+            markers.forEach(({ id, model }) => {
+                const markerEl = document.querySelector(`#${id}`);
+                const modelEl = document.querySelector(`#${model}`);
+
+                markerEl.addEventListener("markerFound", () => {
+                    // 隐藏所有其他 model
+                    markers.forEach(({ model: otherModel }) => {
+                        document.querySelector(`#${otherModel}`).setAttribute("visible", false);
+                    });
+                    // 显示当前 model
+                    modelEl.setAttribute("visible", true);
+
+                    this.positionInterval = setInterval(() => {
+                    // 获取标记的3D世界坐标
+
+                    const markerPos = new THREE.Vector3();
+                    marker.object3D.getWorldPosition(markerPos);
+                    
+                    // 将3D坐标转换为2D屏幕坐标
+                    console.log(markerPos);
+                    const screenPos = markerPos.clone();
+
+                    
+                    // 转换为窗口坐标 (范围: -1到1 → 0到window大小)
+                    const x = Math.round((screenPos.x * 0.5 + 0.5) * window.innerWidth);
+                    const y = Math.round((-screenPos.y * 0.5 + 0.5) * window.innerHeight);
+                    
+                    console.log(`Marker Center Position - X: ${x}px, Y: ${y}px`);
+                    
+                    // 可选：在页面上显示坐标 (左上角为0,0 , 右下角增加）
+                    // document.getElementById('position-display')?.remove();
+                    // const display = document.createElement('div');
+                    // display.id = 'position-display';
+                    // display.style = `
+                    //     position: fixed; top: 20px; left: 20px; 
+                    //     background: rgba(0,0,0,0.7); color: white; 
+                    //     padding: 10px; z-index: 10000;
+                    // `;
+                    // display.textContent = `Marker X: ${x}px, Y: ${y}px`;
+                    // document.body.appendChild(display);
+                    
+                    }, 100); // 每100ms更新一次
                 });
 
-                modelSB.addEventListener('click', function() {
-                    introSBVisible = !introSBVisible;
-                    setVisible(introSBVisible);
-                    console.log('IntroSB visibility toggled:', introSBVisible);
+                markerEl.addEventListener("markerLost", () => {
+                    console.log('Marker lost');                   
+                    modelEl.setAttribute("visible", false);
+
+                    clearInterval(this.positionInterval);
+
+                    document.getElementById('position-display')?.remove();
                 });
-
-                markerSB.addEventListener('markerFound', () => {
-                    console.log('Marker found');
-                });
-
-                markerSB.addEventListener('markerLost', () => {
-                    console.log('Marker lost');
-                    introSBVisible = false;
-                    setVisible(introSBVisible);
-                });
-
-                introSB_bg.setAttribute('float-animation', '');
-            }
-        });
-        
-        document.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-        }, {passive: false});
-
-        // 自定义组件：模型持久化
-        AFRAME.registerComponent('persistent-model', {
-            schema: {
-                modelUrl: { type: 'string' },
-                scale: { type: 'vec3', default: { x: 1, y: 1, z: 1 } }
-            },
-            init: function() {
-                const el = this.el;
-                const modelUrl = this.data.modelUrl;
-                const scale = this.data.scale;
-
-                // 加载模型
-                new THREE.GLTFLoader().load(modelUrl, (gltf) => {
-                    this.model = gltf.scene;
-                    this.model.scale.set(scale.x, scale.y, scale.z);
-                    el.setObject3D('mesh', this.model);
-
-                    // 首次加载时记录位置（模拟标记点初始化）
-                    if (!localStorage.getItem('modelMatrix')) {
-                        const matrix = new THREE.Matrix4().compose(
-                            new THREE.Vector3(0, 0, -1), // 默认位置：摄像头前方1米
-                            new THREE.Quaternion(),
-                            new THREE.Vector3(1, 1, 1)
-                        );
-                        localStorage.setItem('modelMatrix', JSON.stringify(matrix.elements));
-                    }
-
-                    // 从缓存恢复位置
-                    const savedMatrix = JSON.parse(localStorage.getItem('modelMatrix'));
-                    this.model.applyMatrix4(new THREE.Matrix4().fromArray(savedMatrix));
-                });
-            },
-            tick: function() {
-                // 持续更新模型位置（基于SLAM的相机位移）
-                if (this.model) {
-                    const camera = document.querySelector('[camera]').object3D;
-                    const inverseMatrix = new THREE.Matrix4().copy(camera.matrixWorld).invert();
-                    this.model.position.applyMatrix4(inverseMatrix);
-                }
-            }
+            });
         });
 
-        // 自定义组件：SLAM标记替代
-        AFRAME.registerComponent('slam-marker', {
-            init: function() {
-                const sceneEl = this.el.sceneEl;
-                sceneEl.addEventListener('arjs-video-loaded', () => {
-                    console.log('SLAM环境已初始化');
-                });
-            }
-        });
     </script>
 </body>
 </html>
