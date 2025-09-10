@@ -20197,7 +20197,7 @@
     ],
     "images": [
         {
-            "uri": "..\\Da Vinci Model\\textures\\robot_1_Diffuse.png"
+            "uri": "..\\textures\\robot_1_Diffuse.png"
         }
     ],
     "materials": [
