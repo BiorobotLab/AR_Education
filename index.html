@@ -65,7 +65,7 @@
             id="target"
             position="0 0 0"
             rotation="0 0 0"
-            scale="0.01 0.01 0.01"
+            scale="0.025 0.025 0.025"
             gltf-model="url(models/result.gltf)"
             visible="false">
         </a-entity>
@@ -153,8 +153,24 @@
 
             if (!activeMarker) return;
             
+
             const pos = activeMarker.object3D.position;
             const rot = activeMarker.object3D.rotation;
+
+            let R = document.querySelector(`#Right`);
+            let L = document.querySelector(`#Left`);
+
+            switch(activeMarker){
+                case R:
+                    pos.x -=1;
+                    break;
+                case L:
+                    pos.x +=1;
+                    break;
+                default:
+                    console.log("Error occur");
+                    break;                                
+            }
 
             model.object3D.position.copy(pos);
 
