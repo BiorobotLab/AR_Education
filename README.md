@@ -12,10 +12,10 @@ Educational use AR platform developed with **AR.js** framework
 
 <!--![image](https://github.com/user-attachments/assets/747394bc-70ae-4de8-a577-8db457e655cc)-->
 
-<img width="1500" height="1500" alt="pattern-F" src="https://github.com/user-attachments/assets/cdc35d5b-0c9a-41bf-a3e6-a408a7f5f16a" />
-<img width="1500" height="1500" alt="pattern-L" src="https://github.com/user-attachments/assets/ee4b9771-8aea-4b0b-a2e3-73fc9c915b6d" />
-<img width="1500" height="1500" alt="pattern-R" src="https://github.com/user-attachments/assets/d8864a81-5772-42ee-b3bc-7553dea9300b" />
-<img width="1500" height="1500" alt="pattern-B" src="https://github.com/user-attachments/assets/1433a657-14f4-4cb1-9a4a-11e6bec71c18" />
+<img width="750" height="750" alt="pattern-F" src="https://github.com/user-attachments/assets/cdc35d5b-0c9a-41bf-a3e6-a408a7f5f16a" />
+<img width="750" height="750" alt="pattern-L" src="https://github.com/user-attachments/assets/ee4b9771-8aea-4b0b-a2e3-73fc9c915b6d" />
+<img width="750" height="750" alt="pattern-R" src="https://github.com/user-attachments/assets/d8864a81-5772-42ee-b3bc-7553dea9300b" />
+<img width="750" height="750" alt="pattern-B" src="https://github.com/user-attachments/assets/1433a657-14f4-4cb1-9a4a-11e6bec71c18" />
 
 
 Surgical System
