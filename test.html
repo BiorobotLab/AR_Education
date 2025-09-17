@@ -62,6 +62,7 @@
         vr-mode-ui="enabled: false">
 
         <script id="marker-template" type="text/html">
+            <!--        Arm        -->
             <a-marker preset="pattern" type="pattern" id="Arm{{id}}" url="./patterns/{{pattern}}.patt">
                 <a-entity
                     id="{{id}}"
@@ -72,33 +73,35 @@
                     visible="false">
                 </a-entity>
             </a-marker>
+
+            <!--      console      -->
+            <a-marker preset="pattern" type="pattern" id="Console{{id}}" url="./patterns/{{pattern}}.patt">
+                <a-entity
+                    id="{{id}}"
+                    position="{{position}}"
+                    rotation="0 0 0"
+                    scale="0.035 0.035 0.035"
+                    gltf-model="url(models/console.gltf)"
+                    visible="false">
+                </a-entity>
+            </a-marker>
+    
+            <!--      vision      -->
+            <a-marker preset="pattern" type="pattern" id="Vision{{id}}" url="./patterns/{{pattern}}.patt">
+                <a-entity
+                    id="{{id}}"
+                    position="{{position}}"
+                    rotation="0 0 0"
+                    scale="0.035 0.035 0.035"
+                    gltf-model="url(models/vision.gltf)"
+                    visible="false">
+                </a-entity>
+            </a-marker>
         </script>
 
         <a-entity id="dynamic-markers"></a-entity>
 
         <a-entity camera></a-entity>
-
-        <div class="container">
-            <div class="marker-info">
-                <div class="marker">
-                    <div class="marker-color" style="background-color: #FF5252;"></div>
-                    <span>Front</span>
-                </div>
-                <div class="marker">
-                    <div class="marker-color" style="background-color: #4CAF50;"></div>
-                    <span>Left</span>
-                </div>
-                <div class="marker">
-                    <div class="marker-color" style="background-color: #2196F3;"></div>
-                    <span>Right</span>
-                </div>
-                <div class="marker">
-                    <div class="marker-color" style="background-color: #FFC107;"></div>
-                    <span>Back</span>
-                </div>
-            </div>
-        </div>
-
     </a-scene>
 
 
@@ -107,10 +110,10 @@
             const marker = document.querySelector('a-marker');
             
             const markers = [
-                { id: 'Front', pattern: 'Front', position: '0 0 0' },
+                { id: 'Front', pattern: 'Front', position: '0 1 0' },
                 { id: 'Left', pattern: 'Left', position: '1 0 0' },
                 { id: 'Right', pattern: 'Right', position: '-1 0 0' },
-                { id: 'Back', pattern: 'Back', position: '0 0 0' }
+                { id: 'Back', pattern: 'Back', position: '0 -1 0' }
             ];
 
             const template = document.getElementById('marker-template').innerHTML;
@@ -128,54 +131,61 @@
                 container.appendChild(div.firstElementChild);
             });
 
-            markers.forEach(({ id }) => {
-                const markerEl = document.querySelector(`#Arm${id}`);
-                const modelEl = document.querySelector(`#${id}`);
+            const type = [
+                "Arm", "Console", "Vision"
+            ]
 
-                markerEl.addEventListener("markerFound", () => {
-                    markers.forEach(({ id: otherModel }) => {
-                        document.querySelector(`#${otherModel}`).setAttribute("visible", false);
+            type.forEach(type => {
+                markers.forEach(({ id }) => {
+                    const markerEl = document.querySelector(`#${type}${id}`);
+
+                    const modelEl = document.querySelector(`#${id}`);
+
+                    markerEl.addEventListener("markerFound", () => {
+                        markers.forEach(({ id: otherModel }) => {
+                            document.querySelector(`#${otherModel}`).setAttribute("visible", false);
+                        });
+                        modelEl.setAttribute("visible", true);
+
+                        this.positionInterval = setInterval(() => {
+
+                            const markerPos = new THREE.Vector3();
+                            marker.object3D.getWorldPosition(markerPos);
+                            
+                            // 将3D坐标转换为2D屏幕坐标
+                            console.log(markerPos);
+                            const screenPos = markerPos.clone();
+
+                            
+                            // 转换为窗口坐标 (范围: -1到1 → 0到window大小)
+                            const x = Math.round((screenPos.x * 0.5 + 0.5) * window.innerWidth);
+                            const y = Math.round((-screenPos.y * 0.5 + 0.5) * window.innerHeight);
+                            
+                            console.log(`Marker Center Position - X: ${x}px, Y: ${y}px`);
+                        
+                        // 可选：在页面上显示坐标 (左上角为0,0 , 右下角增加）
+                        // document.getElementById('position-display')?.remove();
+                        // const display = document.createElement('div');
+                        // display.id = 'position-display';
+                        // display.style = `
+                        //     position: fixed; top: 20px; left: 20px; 
+                        //     background: rgba(0,0,0,0.7); color: white; 
+                        //     padding: 10px; z-index: 10000;
+                        // `;
+                        // display.textContent = `Marker X: ${x}px, Y: ${y}px`;
+                        // document.body.appendChild(display);
+                        
+                        }, 100);
                     });
-                    modelEl.setAttribute("visible", true);
 
-                    this.positionInterval = setInterval(() => {
+                    markerEl.addEventListener("markerLost", () => {
+                        console.log('Marker lost');                   
+                        modelEl.setAttribute("visible", false);
 
-                        const markerPos = new THREE.Vector3();
-                        marker.object3D.getWorldPosition(markerPos);
-                        
-                        // 将3D坐标转换为2D屏幕坐标
-                        console.log(markerPos);
-                        const screenPos = markerPos.clone();
+                        clearInterval(this.positionInterval);
 
-                        
-                        // 转换为窗口坐标 (范围: -1到1 → 0到window大小)
-                        const x = Math.round((screenPos.x * 0.5 + 0.5) * window.innerWidth);
-                        const y = Math.round((-screenPos.y * 0.5 + 0.5) * window.innerHeight);
-                        
-                        console.log(`Marker Center Position - X: ${x}px, Y: ${y}px`);
-                    
-                    // 可选：在页面上显示坐标 (左上角为0,0 , 右下角增加）
-                    // document.getElementById('position-display')?.remove();
-                    // const display = document.createElement('div');
-                    // display.id = 'position-display';
-                    // display.style = `
-                    //     position: fixed; top: 20px; left: 20px; 
-                    //     background: rgba(0,0,0,0.7); color: white; 
-                    //     padding: 10px; z-index: 10000;
-                    // `;
-                    // display.textContent = `Marker X: ${x}px, Y: ${y}px`;
-                    // document.body.appendChild(display);
-                    
-                    }, 100);
-                });
-
-                markerEl.addEventListener("markerLost", () => {
-                    console.log('Marker lost');                   
-                    modelEl.setAttribute("visible", false);
-
-                    clearInterval(this.positionInterval);
-
-                    document.getElementById('position-display')?.remove();
+                        document.getElementById('position-display')?.remove();
+                    });
                 });
             });
         });
