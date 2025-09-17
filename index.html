@@ -61,28 +61,82 @@
         displayHeight: window.innerHeight; detectionMode: mono_and_matrix; matrixCodeType: 3x3;'
         vr-mode-ui="enabled: false">
 
+
+        <!--        Arm        -->
         <a-entity
             id="target"
             position="0 0 0"
             rotation="0 0 0"
-            scale="0.025 0.025 0.025"
-            gltf-model="url(models/result.gltf)"
+            scale="0.035 0.035 0.035"
+            gltf-model="url(models/arm.gltf)"
             visible="false">
         </a-entity>
 
-        <a-marker preset="pattern" type="pattern" id="Front" 
+        <a-marker preset="pattern" type="pattern" id="ArmFront" 
             url="./patterns/Front.patt">
         </a-marker>
 
-        <a-marker preset="pattern" type="pattern" id="Left" 
+        <a-marker preset="pattern" type="pattern" id="ArmLeft" 
             url="./patterns/Left.patt">
         </a-marker>
 
-        <a-marker preset="pattern" type="pattern" id="Right" 
+        <a-marker preset="pattern" type="pattern" id="ArmRight" 
             url="./patterns/Right.patt">
         </a-marker>
 
-        <a-marker preset="pattern" type="pattern" id="Back" 
+        <a-marker preset="pattern" type="pattern" id="ArmBack" 
+            url="./patterns/Back.patt">
+        </a-marker>
+
+        <!--      console      -->
+        <a-entity
+            id="target"
+            position="0 0 0"
+            rotation="0 0 0"
+            scale="0.035 0.035 0.035"
+            gltf-model="url(models/console.gltf)"
+            visible="false">
+        </a-entity>
+
+        <a-marker preset="pattern" type="pattern" id="ConsoleFront" 
+            url="./patterns/Front.patt">
+        </a-marker>
+
+        <a-marker preset="pattern" type="pattern" id="ConsoleLeft" 
+            url="./patterns/Left.patt">
+        </a-marker>
+
+        <a-marker preset="pattern" type="pattern" id="ConsoleRight" 
+            url="./patterns/Right.patt">
+        </a-marker>
+
+        <a-marker preset="pattern" type="pattern" id="ConsoleBack" 
+            url="./patterns/Back.patt">
+        </a-marker>
+    
+        <!--      vision      -->
+        <a-entity
+            id="target"
+            position="0 0 0"
+            rotation="0 0 0"
+            scale="0.035 0.035 0.035"
+            gltf-model="url(models/vision.gltf)"
+            visible="false">
+        </a-entity>
+
+        <a-marker preset="pattern" type="pattern" id="VisionFront" 
+            url="./patterns/Front.patt">
+        </a-marker>
+
+        <a-marker preset="pattern" type="pattern" id="VisionLeft" 
+            url="./patterns/Left.patt">
+        </a-marker>
+
+        <a-marker preset="pattern" type="pattern" id="VisionRight" 
+            url="./patterns/Right.patt">
+        </a-marker>
+
+        <a-marker preset="pattern" type="pattern" id="VisionBack" 
             url="./patterns/Back.patt">
         </a-marker>
 
@@ -95,14 +149,24 @@
         const model = document.querySelector("#target");
         let activeMarker = null;
         let hideTimeout = null;
-        
+    
         scene.addEventListener('loaded', function() {
-            const markers = [
-                "Front",
-                "Left",
-                "Right",
-                "Back"
-            ];
+            const markers = {
+                "ArmFront": [0, 1],
+                "ArmLeft": [1, 0],
+                "ArmRight": [-1, 0],
+                "ArmBack": [0, -1],
+
+                "ConsoleFront": [0, 1],
+                "ConsoleLeft": [1, 0],
+                "ConsoleRight": [-1, 0],
+                "ConsoleBack": [0, -1],
+
+                "VisionFront": [0, 1],
+                "VisionLeft": [1, 0],
+                "VisionRight": [-1, 0],
+                "VisionBack": [0, -1],
+            };
 
             markers.forEach((_id) => {
                 const markerEl = document.querySelector(`#${_id}`);
@@ -120,7 +184,7 @@
                         hideTimeout = null;
                     }
                     
-                    activeMarker = markerEl;
+                    activeMarker = _id;
                     updateModelPosition();
                 });
 
@@ -128,7 +192,7 @@
                 markerEl.addEventListener("markerLost", () => {
                     console.log('marker lost');            
 
-                    if (activeMarker === markerEl) {                  
+                    if (activeMarker === _id) {                  
                         hideTimeout = setTimeout(() => {
                             model.setAttribute('visible', false);
                             activeMarker = null;
@@ -157,20 +221,8 @@
             const pos = activeMarker.object3D.position;
             const rot = activeMarker.object3D.rotation;
 
-            let R = document.querySelector(`#Right`);
-            let L = document.querySelector(`#Left`);
-
-            switch(activeMarker){
-                case R:
-                    pos.x -=1;
-                    break;
-                case L:
-                    pos.x +=1;
-                    break;
-                default:
-                    console.log("Error occur");
-                    break;                                
-            }
+            pos.x + markers[activeMarker][0];
+            pos.y + markers[activeMarker][1];
 
             model.object3D.position.copy(pos);
 

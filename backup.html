@@ -61,54 +61,153 @@
         displayHeight: window.innerHeight; detectionMode: mono_and_matrix; matrixCodeType: 3x3;'
         vr-mode-ui="enabled: false">
 
-        <!-- <a-marker preset="pattern" type="pattern" id="Front" 
+        <!--        Arm        -->
+        <a-marker preset="pattern" type="pattern" id="ArmFront" 
             url="./patterns/Front.patt">
             <a-entity
                 id="F"
                 position="0 0 0"
                 rotation="0 0 0"
-                scale="0.01 0.01 0.01"
-                gltf-model="url(models/result.gltf)"
+                scale="0.035 0.035 0.035"
+                gltf-model="url(models/arm.gltf)"
                 visible="false">
             </a-entity>
-        </a-marker> -->
+        </a-marker>
 
-        <a-marker preset="pattern" type="pattern" id="Left" 
+        <a-marker preset="pattern" type="pattern" id="ArmLeft" 
             url="./patterns/Left.patt">
             <a-entity
                 id="L"
                 position="1 0 0"
                 rotation="0 0 0"
-                scale="0.025 0.025 0.025"
-                gltf-model="url(models/result.gltf)"
+                scale="0.035 0.035 0.035"
+                gltf-model="url(models/arm.gltf)"
                 visible="false">
             </a-entity>
         </a-marker>
 
-        <a-marker preset="pattern" type="pattern" id="Right" 
+        <a-marker preset="pattern" type="pattern" id="ArmRight" 
             url="./patterns/Right.patt">
             <a-entity
                 id="R"
                 position="-1 0 0"
                 rotation="0 0 0"
-                scale="0.025 0.025 0.025"
-                gltf-model="url(models/result.gltf)"
+                scale="0.035 0.035 0.035"
+                gltf-model="url(models/arm.gltf)"
                 visible="false">
             </a-entity>
         </a-marker>
 
-        <!-- <a-marker preset="pattern" type="pattern" id="Back" 
+        <a-marker preset="pattern" type="pattern" id="ArmBack" 
             url="./patterns/Back.patt">
             <a-entity
                 id="B"
                 position="0 0 0"
                 rotation="0 0 0"
-                scale="0.01 0.01 0.01"
-                gltf-model="url(models/result.gltf)"
+                scale="0.035 0.035 0.035"
+                gltf-model="url(models/arm.gltf)"
                 visible="false">
             </a-entity>
-        </a-marker> -->
+        </a-marker>
 
+
+        <!--      console      -->
+        <a-marker preset="pattern" type="pattern" id="ConsoleFront" 
+            url="./patterns/Front.patt">
+            <a-entity
+                id="F"
+                position="0 0 0"
+                rotation="0 0 0"
+                scale="0.035 0.035 0.035"
+                gltf-model="url(models/console.gltf)"
+                visible="false">
+            </a-entity>
+        </a-marker>
+
+        <a-marker preset="pattern" type="pattern" id="ConsoleLeft" 
+            url="./patterns/Left.patt">
+            <a-entity
+                id="L"
+                position="1 0 0"
+                rotation="0 0 0"
+                scale="0.035 0.035 0.035"
+                gltf-model="url(models/console.gltf)"
+                visible="false">
+            </a-entity>
+        </a-marker>
+
+        <a-marker preset="pattern" type="pattern" id="ConsoleRight" 
+            url="./patterns/Right.patt">
+            <a-entity
+                id="R"
+                position="-1 0 0"
+                rotation="0 0 0"
+                scale="0.035 0.035 0.035"
+                gltf-model="url(models/console.gltf)"
+                visible="false">
+            </a-entity>
+        </a-marker>
+
+        <a-marker preset="pattern" type="pattern" id="ConsoleBack" 
+            url="./patterns/Back.patt">
+            <a-entity
+                id="B"
+                position="0 0 0"
+                rotation="0 0 0"
+                scale="0.035 0.035 0.035"
+                gltf-model="url(models/console.gltf)"
+                visible="false">
+            </a-entity>
+        </a-marker>
+
+        <!--      vision      -->
+        <a-marker preset="pattern" type="pattern" id="VisionFront" 
+            url="./patterns/Front.patt">
+            <a-entity
+                id="F"
+                position="0 0 0"
+                rotation="0 0 0"
+                scale="0.035 0.035 0.035"
+                gltf-model="url(models/vision.gltf)"
+                visible="false">
+            </a-entity>
+        </a-marker>
+
+        <a-marker preset="pattern" type="pattern" id="VisionLeft" 
+            url="./patterns/Left.patt">
+            <a-entity
+                id="L"
+                position="1 0 0"
+                rotation="0 0 0"
+                scale="0.035 0.035 0.035"
+                gltf-model="url(models/vision.gltf)"
+                visible="false">
+            </a-entity>
+        </a-marker>
+
+        <a-marker preset="pattern" type="pattern" id="VisionRight" 
+            url="./patterns/Right.patt">
+            <a-entity
+                id="R"
+                position="-1 0 0"
+                rotation="0 0 0"
+                scale="0.035 0.035 0.035"
+                gltf-model="url(models/vision.gltf)"
+                visible="false">
+            </a-entity>
+        </a-marker>
+
+        <a-marker preset="pattern" type="pattern" id="VisionBack" 
+            url="./patterns/Back.patt">
+            <a-entity
+                id="B"
+                position="0 0 0"
+                rotation="0 0 0"
+                scale="0.035 0.035 0.035"
+                gltf-model="url(models/vision.gltf)"
+                visible="false">
+            </a-entity>
+        </a-marker>
         <a-entity camera></a-entity camera>
     </a-scene>
 
@@ -119,6 +218,8 @@
             
             const markers = [
                 // { id: "Front", model: "F" },
+                { id: "Left", model: "L" },
+                { id: "Right", model: "R" },
                 { id: "Left", model: "L" },
                 { id: "Right", model: "R" },
                 // { id: "Back", model: "B" }
