@@ -1,6 +1,11 @@
 # AR_Education
 Educational use AR platform developed with **AR.js** framework
 
+*Custom Version*
+<img width="300" height="300" alt="frame" src="https://github.com/user-attachments/assets/e9759ba0-573f-42f8-a7b6-2d66570bd418" />
+*Backup Version*<img width="300" height="300" alt="frame (1)" src="https://github.com/user-attachments/assets/e32d2a0c-ea9d-4dd1-b2ac-8f058ac6036f" />
+
+
 
 **Marker**
 
@@ -12,7 +17,15 @@ Educational use AR platform developed with **AR.js** framework
 <img width="2500" height="2500" alt="pattern-B" src="https://github.com/user-attachments/assets/1433a657-14f4-4cb1-9a4a-11e6bec71c18" />
 
 
-Surgery Bed
+Surgical System
+Currently using model purchased from https://www.artstation.com/marketplace/p/Jxmq/surgical-system-da-vinci-xi-model-3d-model
+<img width="788" height="1018" alt="{91A33BAF-18F5-4B06-BB28-FF3B7A3FBDD3}" src="https://github.com/user-attachments/assets/79ca8daa-8d0c-479a-920f-eb31db257706" />
+
+The model can be DIY using **3Ds Max** then export as FBX, then futher converted to gltf on https://convert3d.org/fbx-to-gltf.
+*(Direct exported from 3Ds Max not satisfactory)*
+
+
+
 
 **Digital Ocean**
 Linked with Github repository(Auto update when committed)
