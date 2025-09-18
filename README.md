@@ -16,6 +16,8 @@ Arm
 <div class="w3-row">
  <img width="300" height="300" alt="armFront" src="./marker/armFront.png" />
  <img width="300" height="300" alt="armLeft" src="./marker/armLeft.png" />
+</div>
+<div class="w3-row">
  <img width="300" height="300" alt="armRight" src="./marker/armRight.png" />
  <img width="300" height="300" alt="armBack" src="./marker/armBack.png" />
 </div>
@@ -24,6 +26,8 @@ Console
 <div class="w3-row">
  <img width="300" height="300" alt="consoleFront" src="./marker/consoleFront.png" />
  <img width="300" height="300" alt="consoleLeft" src="./marker/consoleLeft.png" />
+</div>
+<div class="w3-row">
  <img width="300" height="300" alt="consoleRight" src="./marker/consoleRight.png" />
  <img width="300" height="300" alt="consoleBack" src="./marker/consoleBack.png" />
 </div>
@@ -32,6 +36,8 @@ Vision
 <div class="w3-row">
  <img width="300" height="300" alt="visionFront" src="./marker/visionFront.png" />
  <img width="300" height="300" alt="visionLeft" src="./marker/visionLeft.png" />
+</div>
+<div class="w3-row">
  <img width="300" height="300" alt="visionRight" src="./marker/visionRight.png" />
  <img width="300" height="300" alt="visionBack" src="./marker/visionBack.png" />
 </div>
