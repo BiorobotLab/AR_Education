@@ -12,10 +12,10 @@ Educational use AR platform developed with **AR.js** framework
 
 <!--![image](https://github.com/user-attachments/assets/747394bc-70ae-4de8-a577-8db457e655cc)-->
 
-<img width="300" height="300" alt="armFront" src="./marker/armFront" />
-<img width="300" height="300" alt="armLeft" src="./marker/armLeft" />
-<img width="300" height="300" alt="armRight" src="./marker/armRight" />
-<img width="300" height="300" alt="armBack" src="./marker/armBack" />
+<img width="300" height="300" alt="armFront" src="../marker/armFront" />
+<img width="300" height="300" alt="armLeft" src="../marker/armLeft" />
+<img width="300" height="300" alt="armRight" src="../marker/armRight" />
+<img width="300" height="300" alt="armBack" src="../marker/armBack" />
 
 
 Surgical System
