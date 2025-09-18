@@ -12,11 +12,29 @@ Educational use AR platform developed with **AR.js** framework
 
 <!--![image](https://github.com/user-attachments/assets/747394bc-70ae-4de8-a577-8db457e655cc)-->
 
-<img width="300" height="300" alt="armFront" src="../marker/armFront" />
-<img width="300" height="300" alt="armLeft" src="../marker/armLeft" />
-<img width="300" height="300" alt="armRight" src="../marker/armRight" />
-<img width="300" height="300" alt="armBack" src="../marker/armBack" />
+Arm
+<div class="w3-row">
+ <img width="300" height="300" alt="armFront" src="./marker/armFront.png" />
+ <img width="300" height="300" alt="armLeft" src="./marker/armLeft.png" />
+ <img width="300" height="300" alt="armRight" src="./marker/armRight.png" />
+ <img width="300" height="300" alt="armBack" src="./marker/armBack.png" />
+</div>
 
+Console
+<div class="w3-row">
+ <img width="300" height="300" alt="consoleFront" src="./marker/consoleFront.png" />
+ <img width="300" height="300" alt="consoleLeft" src="./marker/consoleLeft.png" />
+ <img width="300" height="300" alt="consoleRight" src="./marker/consoleRight.png" />
+ <img width="300" height="300" alt="consoleBack" src="./marker/consoleBack.png" />
+</div>
+
+Vision
+<div class="w3-row">
+ <img width="300" height="300" alt="visionFront" src="./marker/visionFront.png" />
+ <img width="300" height="300" alt="visionLeft" src="./marker/visionLeft.png" />
+ <img width="300" height="300" alt="visionRight" src="./marker/visionRight.png" />
+ <img width="300" height="300" alt="visionBack" src="./marker/visionBack.png" />
+</div>
 
 Surgical System
 Currently using model purchased from https://www.artstation.com/marketplace/p/Jxmq/surgical-system-da-vinci-xi-model-3d-model
