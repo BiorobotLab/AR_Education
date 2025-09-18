@@ -2,8 +2,8 @@
 Educational use AR platform developed with **AR.js** framework
 
 <div class="w3-row">
- *Custom Version*<img width="300" height="300" alt="frame" src="https://github.com/user-attachments/assets/e9759ba0-573f-42f8-a7b6-2d66570bd418" />
- *Backup Version*<img width="300" height="300" alt="frame (1)" src="https://github.com/user-attachments/assets/e32d2a0c-ea9d-4dd1-b2ac-8f058ac6036f" />
+ *Custom Version*<img width="auto" height="auto" alt="frame" src="https://github.com/user-attachments/assets/e9759ba0-573f-42f8-a7b6-2d66570bd418" />
+ *Backup Version*<img width="auto" height="auto" alt="frame (1)" src="https://github.com/user-attachments/assets/e32d2a0c-ea9d-4dd1-b2ac-8f058ac6036f" />
 </div>
 <br>
 
