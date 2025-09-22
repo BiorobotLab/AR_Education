@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>BioLab AR Demonstration</title>
+    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/aframe-text-geometry-component@^0.5.0/dist/aframe-text-geometry-component.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+        }
+        .a-enter-vr {
+            display: none !important;
+        }
+
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+        #loading-message {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+        #loading-progress {
+            width: 50%;
+            max-width: 300px;
+            height: 10px;
+            background: #333;
+            margin-top: 20px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        #loading-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: #4CAF50;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+
+<body>
+    <a-scene embedded
+        arjs='trackingMethod: best; sourceType: webcam; sourceWidth: 1920;
+        sourceHeight: 1080; frameRate: 60; displayWidth: window.innerWidth;
+        displayHeight: window.innerHeight; detectionMode: mono_and_matrix; matrixCodeType: 3x3;'
+        vr-mode-ui="enabled: false">
+
+        <a-marker preset="pattern" type="pattern" id="Arm" url="./patterns/armFront.patt">
+            <a-entity
+                id="arm"
+                position="0 -1 0"
+                rotation="0 0 0"
+                scale="0.035 0.035 0.035"
+                gltf-model="url(models/vision.gltf)"
+                visible="false">
+            </a-entity>
+        </a-marker>
+
+        <a-entity camera></a-entity>
+    </a-scene>
+
+
+    <script>
+        document.querySelector('a-scene').addEventListener('loaded', function() {
+            const marker = document.querySelector('a-marker');
+            
+            const markerEl = document.querySelector(`#Arm`);
+            const modelEl = document.querySelector(`#arm`);
+
+            markerEl.addEventListener("markerFound", () => {
+                modelEl.setAttribute("visible", true);
+
+                this.positionInterval = setInterval(() => {
+
+                    const markerPos = new THREE.Vector3();
+                    markerEl.object3D.getWorldPosition(markerPos);
+                    
+                    // 将3D坐标转换为2D屏幕坐标
+                    console.log(markerPos);
+                    const screenPos = markerPos.clone();
+
+                    
+                    // 转换为窗口坐标 (范围: -1到1 → 0到window大小)
+                    const x = Math.round((screenPos.x * 0.5 + 0.5) * window.innerWidth);
+                    const y = Math.round((-screenPos.y * 0.5 + 0.5) * window.innerHeight);
+                    
+                    console.log(`Marker Center Position - X: ${x}px, Y: ${y}px`);
+                }, 100);
+            });
+
+            markerEl.addEventListener("markerLost", () => {
+                console.log('Marker lost');                   
+                modelEl.setAttribute("visible", false);
+
+                clearInterval(this.positionInterval);
+
+                document.getElementById('position-display')?.remove();
+            });
+        });        
+    </script>
+</body>
+</html>
