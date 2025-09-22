@@ -1,22 +1,46 @@
 # AR_Education
 Educational use AR platform developed with **AR.js** framework
 
-*Custom Version*
-<img width="300" height="300" alt="frame" src="https://github.com/user-attachments/assets/e9759ba0-573f-42f8-a7b6-2d66570bd418" />
-<br/>
-*Backup Version*<img width="300" height="300" alt="frame (1)" src="https://github.com/user-attachments/assets/e32d2a0c-ea9d-4dd1-b2ac-8f058ac6036f" />
-
+<div class="w3-row">
+ *Custom Version*<img width="auto" height="auto" alt="frame" src="https://github.com/user-attachments/assets/e9759ba0-573f-42f8-a7b6-2d66570bd418" />
+ *Backup Version*<img width="auto" height="auto" alt="frame (1)" src="https://github.com/user-attachments/assets/e32d2a0c-ea9d-4dd1-b2ac-8f058ac6036f" />
+</div>
+<br>
 
 
 **Marker**
 
 <!--![image](https://github.com/user-attachments/assets/747394bc-70ae-4de8-a577-8db457e655cc)-->
 
-<img width="750" height="750" alt="pattern-F" src="https://github.com/user-attachments/assets/cdc35d5b-0c9a-41bf-a3e6-a408a7f5f16a" />
-<img width="750" height="750" alt="pattern-L" src="https://github.com/user-attachments/assets/ee4b9771-8aea-4b0b-a2e3-73fc9c915b6d" />
-<img width="750" height="750" alt="pattern-R" src="https://github.com/user-attachments/assets/d8864a81-5772-42ee-b3bc-7553dea9300b" />
-<img width="750" height="750" alt="pattern-B" src="https://github.com/user-attachments/assets/1433a657-14f4-4cb1-9a4a-11e6bec71c18" />
+Arm
+<div class="w3-row">
+ <img width="300" height="300" alt="armFront" src="./marker/armFront.png" />
+ <img width="300" height="300" alt="armLeft" src="./marker/armLeft.png" />
+</div>
+<div class="w3-row">
+ <img width="300" height="300" alt="armRight" src="./marker/armRight.png" />
+ <img width="300" height="300" alt="armBack" src="./marker/armBack.png" />
+</div>
 
+Console
+<div class="w3-row">
+ <img width="300" height="300" alt="consoleFront" src="./marker/consoleFront.png" />
+ <img width="300" height="300" alt="consoleLeft" src="./marker/consoleLeft.png" />
+</div>
+<div class="w3-row">
+ <img width="300" height="300" alt="consoleRight" src="./marker/consoleRight.png" />
+ <img width="300" height="300" alt="consoleBack" src="./marker/consoleBack.png" />
+</div>
+
+Vision
+<div class="w3-row">
+ <img width="300" height="300" alt="visionFront" src="./marker/visionFront.png" />
+ <img width="300" height="300" alt="visionLeft" src="./marker/visionLeft.png" />
+</div>
+<div class="w3-row">
+ <img width="300" height="300" alt="visionRight" src="./marker/visionRight.png" />
+ <img width="300" height="300" alt="visionBack" src="./marker/visionBack.png" />
+</div>
 
 Surgical System
 Currently using model purchased from https://www.artstation.com/marketplace/p/Jxmq/surgical-system-da-vinci-xi-model-3d-model
