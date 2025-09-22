@@ -151,7 +151,7 @@
                         this.positionInterval = setInterval(() => {
 
                             const markerPos = new THREE.Vector3();
-                            marker.object3D.getWorldPosition(markerPos);
+                            markerEl.object3D.getWorldPosition(markerPos);
                             
                             // 将3D坐标转换为2D屏幕坐标
                             console.log(markerPos);
