@@ -68,7 +68,7 @@
                     id="arm{{id}}"
                     position="{{position}}"
                     rotation="0 0 0"
-                    scale="0.035 0.035 0.035"
+                    scale="0.025 0.025 0.025"
                     gltf-model="url(models/arm.gltf)"
                     visible="false">
                 </a-entity>
@@ -80,7 +80,7 @@
                     id="console{{id}}"
                     position="{{position}}"
                     rotation="0 0 0"
-                    scale="0.035 0.035 0.035"
+                    scale="0.025 0.025 0.025"
                     gltf-model="url(models/console.gltf)"
                     visible="false">
                 </a-entity>
@@ -92,7 +92,7 @@
                     id="vision{{id}}"
                     position="{{position}}"
                     rotation="0 0 0"
-                    scale="0.035 0.035 0.035"
+                    scale="0.025 0.025 0.025"
                     gltf-model="url(models/vision.gltf)"
                     visible="false">
                 </a-entity>
@@ -135,9 +135,7 @@
                 {type: "Vision", model: "vision" },
             ]
 
-            query.forEach(({type, model})=> {
                 markers.forEach(({ id }) => {
-                    
                     const markerEl = document.querySelector(`#${type}${id}`);
                     console.log(markerEl);
                     const modelEl = document.querySelector(`#${model}${id}`);
