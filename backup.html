@@ -108,10 +108,10 @@
     <script>
         document.querySelector('a-scene').addEventListener('loaded', function() {
             const markers = [
-                { id: 'Front', pattern: 'Front', position: '0 1 0' },
+                { id: 'Front', pattern: 'Front', position: '0 0 1' },
                 { id: 'Left', pattern: 'Left', position: '1 0 0' },
                 { id: 'Right', pattern: 'Right', position: '-1 0 0' },
-                { id: 'Back', pattern: 'Back', position: '0 -1 0' }
+                { id: 'Back', pattern: 'Back', position: '0 0 -1' }
             ];
 
             const template = document.getElementById('marker-template').innerHTML;
