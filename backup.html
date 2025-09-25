@@ -135,7 +135,7 @@
                 {type: "Vision", model: "vision" },
             ]
 
-            query.forEach((type, model) => {
+            query.forEach(({ type, model }) => {
                 markers.forEach(({ id }) => {
                     const markerEl = document.querySelector(`#${type}${id}`);
                     console.log(markerEl);
