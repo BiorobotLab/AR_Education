@@ -61,210 +61,168 @@
         displayHeight: window.innerHeight; detectionMode: mono_and_matrix; matrixCodeType: 3x3;'
         vr-mode-ui="enabled: false">
 
-
         <!--        Arm        -->
         <a-entity
-            id="target"
+            id="Arm"
             position="0 0 0"
             rotation="0 0 0"
-            scale="0.035 0.035 0.035"
+            scale="0.025 0.025 0.025"
             gltf-model="url(models/arm.gltf)"
             visible="false">
         </a-entity>
 
-        <a-marker preset="pattern" type="pattern" id="ArmFront" 
-            url="./patterns/armFront.patt">
-        </a-marker>
-
-        <a-marker preset="pattern" type="pattern" id="ArmLeft" 
-            url="./patterns/armLeft.patt">
-        </a-marker>
-
-        <a-marker preset="pattern" type="pattern" id="ArmRight" 
-            url="./patterns/armRight.patt">
-        </a-marker>
-
-        <a-marker preset="pattern" type="pattern" id="ArmBack" 
-            url="./patterns/armBack.patt">
-        </a-marker>
-
         <!--      console      -->
         <a-entity
-            id="target"
+            id="Console"
             position="0 0 0"
             rotation="0 0 0"
-            scale="0.035 0.035 0.035"
+            scale="0.025 0.025 0.025"
             gltf-model="url(models/console.gltf)"
             visible="false">
         </a-entity>
 
-        <a-marker preset="pattern" type="pattern" id="ConsoleFront" 
-            url="./patterns/consoleFront.patt">
-        </a-marker>
-
-        <a-marker preset="pattern" type="pattern" id="ConsoleLeft" 
-            url="./patterns/consoleLeft.patt">
-        </a-marker>
-
-        <a-marker preset="pattern" type="pattern" id="ConsoleRight" 
-            url="./patterns/consoleRight.patt">
-        </a-marker>
-
-        <a-marker preset="pattern" type="pattern" id="ConsoleBack" 
-            url="./patterns/consoleBack.patt">
-        </a-marker>
-    
         <!--      vision      -->
         <a-entity
-            id="target"
+            id="Vision"
             position="0 0 0"
             rotation="0 0 0"
-            scale="0.035 0.035 0.035"
+            scale="0.025 0.025 0.025"
             gltf-model="url(models/vision.gltf)"
             visible="false">
         </a-entity>
 
-        <a-marker preset="pattern" type="pattern" id="VisionFront" 
-            url="./patterns/visionFront.patt">
-        </a-marker>
 
-        <a-marker preset="pattern" type="pattern" id="VisionLeft" 
-            url="./patterns/visionLeft.patt">
-        </a-marker>
-
-        <a-marker preset="pattern" type="pattern" id="VisionRight" 
-            url="./patterns/visionRight.patt">
-        </a-marker>
-
-        <a-marker preset="pattern" type="pattern" id="VisionBack" 
-            url="./patterns/visionBack.patt">
-        </a-marker>
-
+        <script id="marker-template" type="text/html">
+            <a-marker preset="pattern" type="pattern" id="{{device}}{{dir}}"
+                url="./patterns/{{patternFile}}.patt">
+            </a-marker>
+        </script>
+     
         <a-entity camera></a-entity camera>
     </a-scene>
 
 
     <script>
-        const scene = document.querySelector('a-scene');
-        const model = document.querySelector("#target");
-        let activeMarker = null;
-        let hideTimeout = null;
-    
+        const scene = document.querySelector('a-scene');    
         scene.addEventListener('loaded', function() {
-            const markers = {
-                "ArmFront": [0, 1],
-                "ArmLeft": [1, 0],
-                "ArmRight": [-1, 0],
-                "ArmBack": [0, -1],
 
-                "ConsoleFront": [0, 1],
-                "ConsoleLeft": [1, 0],
-                "ConsoleRight": [-1, 0],
-                "ConsoleBack": [0, -1],
+            const devices = ["Arm", "Console", "Vision"];
+            const directions = ["Front", "Left", "Right", "Back"];
+            const offsets = {
+                Front: [0, 1],
+                Left: [-1, 0],
+                Right: [1, 0],
+                Back: [0, -1],
+            }
 
-                "VisionFront": [0, 1],
-                "VisionLeft": [1, 0],
-                "VisionRight": [-1, 0],
-                "VisionBack": [0, -1],
-            };
+            const template = document.getElementById('marker-template').innerHTML;
 
-            markers.forEach((_id) => {
-                const markerEl = document.querySelector(`#${_id}`);
+            let activeMarker = null;
+            let hideTimeout = null;
 
-                if (!markerEl) {
-                    console.error(`Marker ${_id} not found`);
-                    return;
-                }
 
-                markerEl.addEventListener("markerFound", (e) => {
-                    console.log(`marker ${_id} found`);
+            const deviceState = {};
+            devices.forEach(device => {
+                deviceState[device] = {
+                    currentMarker: null,
+                    hideTimeout: null
+                };
 
-                    if (hideTimeout) {
-                        clearTimeout(hideTimeout);
-                        hideTimeout = null;
-                    }
-                    
-                    activeMarker = _id;
-                    updateModelPosition();
+                directions.forEach(dir => {
+                    let html = template
+                        .replace(/{{device}}/g, device)
+                        .replace(/{{dir}}/g, dir)
+                        .replace(/{{patternFile}}/g, `${device}${dir}`);
+
+                    const div = document.createElement('div');
+                    div.innerHTML = html;
+                    scene.append(...div.childNodes);
                 });
+            });
 
+            devices.forEach(device => {
+                directions.forEach(dir => {
+                    const markerId = `${device}${dir}`;
+                    const markerEl = document.querySelector(`#${markerId}`);
+                    const modelEl = document.getElementById(device);
 
-                markerEl.addEventListener("markerLost", () => {
-                    console.log('marker lost');            
-
-                    if (activeMarker === _id) {                  
-                        hideTimeout = setTimeout(() => {
-                            model.setAttribute('visible', false);
-                            activeMarker = null;
-                        }, 2000);
+                    if (!markerEl || !modelEl) {
+                        console.error(`Missing element for ${markerId}`);
+                        return;
                     }
+
+                    markerEl.markerData = {
+                        device: device,
+                        dir: dir,
+                        offset: offsets[dir]
+                    }
+
+                    markerEl.addEventListener('markerFound', () => {
+                        console.log(`${markerId} found`);
+
+                        const state = deviceState[device];
+
+                        if (state.hideTimeout) {
+                            clearTimeout(state.hideTimeout);
+                            state.hideTimeout = null;
+                        }
+
+                        state.currentMarker = markerEl;
+
+                        updateDeviceModel(device);
+                    });
+
+                    markerEl.addEventListener('markerLost', () => {
+                        const state = deviceState[device];
+
+                        if (state.currentMarker === markerEl) {
+                            console.log(`${markerId} lost`);
+                            state.hideTimeout = setTimeout(() => {
+                                modelEl.setAttribute('visible', false);
+                                state.currentMarker = null;
+                            }, 2000);
+                        }
+                    });
                 });
             });
             
-            
+            function updateDeviceModel(device) {
+                const state = deviceState[device];
+                const modelEl = document.getElementById(device);
+
+                if (!state.currentMarker || !modelEl) return;
+
+                const markerEl = state.currentMarker;
+                const offset = markerEl.markerData.offset;
+
+                const worldPos = new THREE.Vector3();
+                markerEl.object3D.getWorldPosition(worldPos);
+                
+
+                modelEl.object3D.position.set(
+                    worldPos.x + offset[0],
+                    worldPos.y,
+                    worldPos.z + offset[1],
+                );
+
+                modelEl.object3D.rotation.copy(markerEl.object3D.rotation);
+                modelEl.setAttribute('visible', true);
+            }
+
+
             function update() {
-                if (activeMarker) {
-                    updateModelPosition();
-                }
+                devices.forEach(device => {
+                    const state = deviceState[device];
+                    if (state.currentMarker) {
+                        updateDeviceModel(device);
+                    }
+                });
+
                 requestAnimationFrame(update);
             }
             
             update();
         });
-
-        function updateModelPosition() {
-            console.log("Update Model.");
-
-            if (!activeMarker) return;
-            
-
-            const pos = activeMarker.object3D.position;
-            const rot = activeMarker.object3D.rotation;
-
-            pos.x + markers[activeMarker][0];
-            pos.y + markers[activeMarker][1];
-
-            model.object3D.position.copy(pos);
-
-            model.object3D.rotation.set(
-                rot.x,
-                rot.y,
-                rot.z
-            );
-
-            model.setAttribute('visible', true);
-        }
-    /*
-        this.positionInterval = setInterval(() => {
-        // 获取标记的3D世界坐标
-
-        const markerPos = new THREE.Vector3();
-        marker.object3D.getWorldPosition(markerPos);
-        
-        // 将3D坐标转换为2D屏幕坐标
-        console.log(markerPos);
-        const screenPos = markerPos.clone();
-
-        
-        // 转换为窗口坐标 (范围: -1到1 → 0到window大小)
-        const x = Math.round((screenPos.x * 0.5 + 0.5) * window.innerWidth);
-        const y = Math.round((-screenPos.y * 0.5 + 0.5) * window.innerHeight);
-        
-        console.log(`Marker Center Position - X: ${x}px, Y: ${y}px`);
-    */
-    
-    
-    // 可选：在页面上显示坐标 (左上角为0,0 , 右下角增加）
-    // document.getElementById('position-display')?.remove();
-    // const display = document.createElement('div');
-    // display.id = 'position-display';
-    // display.style = `
-    //     position: fixed; top: 20px; left: 20px; 
-    //     background: rgba(0,0,0,0.7); color: white; 
-    //     padding: 10px; z-index: 10000;
-    // `;
-    // display.textContent = `Marker X: ${x}px, Y: ${y}px`;
-    // document.body.appendChild(display);
     </script>
 </body>
 </html>
