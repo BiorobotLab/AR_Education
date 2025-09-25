@@ -135,56 +135,55 @@
                 {type: "Vision", model: "vision" },
             ]
 
-                markers.forEach(({ id }) => {
-                    const markerEl = document.querySelector(`#${type}${id}`);
-                    console.log(markerEl);
-                    const modelEl = document.querySelector(`#${model}${id}`);
+            markers.forEach(({ id }) => {
+                const markerEl = document.querySelector(`#${type}${id}`);
+                console.log(markerEl);
+                const modelEl = document.querySelector(`#${model}${id}`);
 
-                    markerEl.addEventListener("markerFound", () => {
-                        markers.forEach(({ id: otherModel }) => {
-                            document.querySelector(`#${type}${otherModel}`).setAttribute("visible", false);
-                        });
-                        modelEl.setAttribute("visible", true);
-
-                        this.positionInterval = setInterval(() => {
-
-                            const markerPos = new THREE.Vector3();
-                            markerEl.object3D.getWorldPosition(markerPos);
-                            
-                            // 将3D坐标转换为2D屏幕坐标
-                            console.log(markerPos);
-                            const screenPos = markerPos.clone();
-
-                            
-                            // 转换为窗口坐标 (范围: -1到1 → 0到window大小)
-                            const x = Math.round((screenPos.x * 0.5 + 0.5) * window.innerWidth);
-                            const y = Math.round((-screenPos.y * 0.5 + 0.5) * window.innerHeight);
-                            
-                            console.log(`Marker Center Position - X: ${x}px, Y: ${y}px`);
-                        
-                        // 可选：在页面上显示坐标 (左上角为0,0 , 右下角增加）
-                        // document.getElementById('position-display')?.remove();
-                        // const display = document.createElement('div');
-                        // display.id = 'position-display';
-                        // display.style = `
-                        //     position: fixed; top: 20px; left: 20px; 
-                        //     background: rgba(0,0,0,0.7); color: white; 
-                        //     padding: 10px; z-index: 10000;
-                        // `;
-                        // display.textContent = `Marker X: ${x}px, Y: ${y}px`;
-                        // document.body.appendChild(display);
-                        
-                        }, 100);
+                markerEl.addEventListener("markerFound", () => {
+                    markers.forEach(({ id: otherModel }) => {
+                        document.querySelector(`#${type}${otherModel}`).setAttribute("visible", false);
                     });
+                    modelEl.setAttribute("visible", true);
 
-                    markerEl.addEventListener("markerLost", () => {
-                        console.log('Marker lost');                   
-                        modelEl.setAttribute("visible", false);
+                    this.positionInterval = setInterval(() => {
 
-                        clearInterval(this.positionInterval);
+                        const markerPos = new THREE.Vector3();
+                        markerEl.object3D.getWorldPosition(markerPos);
+                        
+                        // 将3D坐标转换为2D屏幕坐标
+                        console.log(markerPos);
+                        const screenPos = markerPos.clone();
 
-                        document.getElementById('position-display')?.remove();
-                    });
+                        
+                        // 转换为窗口坐标 (范围: -1到1 → 0到window大小)
+                        const x = Math.round((screenPos.x * 0.5 + 0.5) * window.innerWidth);
+                        const y = Math.round((-screenPos.y * 0.5 + 0.5) * window.innerHeight);
+                        
+                        console.log(`Marker Center Position - X: ${x}px, Y: ${y}px`);
+                    
+                    // 可选：在页面上显示坐标 (左上角为0,0 , 右下角增加）
+                    // document.getElementById('position-display')?.remove();
+                    // const display = document.createElement('div');
+                    // display.id = 'position-display';
+                    // display.style = `
+                    //     position: fixed; top: 20px; left: 20px; 
+                    //     background: rgba(0,0,0,0.7); color: white; 
+                    //     padding: 10px; z-index: 10000;
+                    // `;
+                    // display.textContent = `Marker X: ${x}px, Y: ${y}px`;
+                    // document.body.appendChild(display);
+                    
+                    }, 100);
+                });
+
+                markerEl.addEventListener("markerLost", () => {
+                    console.log('Marker lost');                   
+                    modelEl.setAttribute("visible", false);
+
+                    clearInterval(this.positionInterval);
+
+                    document.getElementById('position-display')?.remove();
                 });
             });
         });

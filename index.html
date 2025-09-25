@@ -132,7 +132,7 @@
                     let html = template
                         .replace(/{{device}}/g, device)
                         .replace(/{{dir}}/g, dir)
-                        .replace(/{{patternFile}}/g, `${device}${dir}`);
+                        .replace(/{{patternFile}}/g, `${device.toLocaleLowerCase()}${dir}`);
 
                     const div = document.createElement('div');
                     div.innerHTML = html;
