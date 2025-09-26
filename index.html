@@ -58,7 +58,7 @@
     <a-scene embedded
         arjs='trackingMethod: best; sourceType: webcam; sourceWidth: 1920;
         sourceHeight: 1080; frameRate: 60; displayWidth: window.innerWidth;
-        displayHeight: window.innerHeight; detectionMode: mono_and_matrix; matrixCodeType: 3x3;'
+        displayHeight: window.innerHeight; detectionMode: mono; matrixCodeType: 3x3;'
         vr-mode-ui="enabled: false">
 
         <!--        Arm        -->
@@ -94,7 +94,8 @@
 
         <script id="marker-template" type="text/html">
             <a-marker preset="pattern" type="pattern" id="{{device}}{{dir}}"
-                url="./patterns/{{patternFile}}.patt">
+                url="./patterns/{{patternFile}}.patt"
+                size="0.1">
             </a-marker>
         </script>
      

@@ -58,12 +58,13 @@
     <a-scene embedded
         arjs='trackingMethod: best; sourceType: webcam; sourceWidth: 1920;
         sourceHeight: 1080; frameRate: 60; displayWidth: window.innerWidth;
-        displayHeight: window.innerHeight; detectionMode: mono_and_matrix; matrixCodeType: 3x3;'
+        displayHeight: window.innerHeight; detectionMode: mono; matrixCodeType: 3x3;'
         vr-mode-ui="enabled: false">
 
         <script id="marker-template" type="text/html">
             <!--        Arm        -->
-            <a-marker preset="pattern" type="pattern" id="Arm{{id}}" url="./patterns/arm{{pattern}}.patt">
+            <a-marker preset="pattern" type="pattern" id="Arm{{id}}" url="./patterns/arm{{pattern}}.patt" 
+                size="0.1">
                 <a-entity
                     id="arm{{id}}"
                     position="{{position}}"
@@ -75,7 +76,8 @@
             </a-marker>
 
             <!--      console      -->
-            <a-marker preset="pattern" type="pattern" id="Console{{id}}" url="./patterns/console{{pattern}}.patt">
+            <a-marker preset="pattern" type="pattern" id="Console{{id}}" url="./patterns/console{{pattern}}.patt"
+                size="0.1">
                 <a-entity
                     id="console{{id}}"
                     position="{{position}}"
@@ -87,7 +89,8 @@
             </a-marker>
     
             <!--      vision      -->
-            <a-marker preset="pattern" type="pattern" id="Vision{{id}}" url="./patterns/vision{{pattern}}.patt">
+            <a-marker preset="pattern" type="pattern" id="Vision{{id}}" url="./patterns/vision{{pattern}}.patt"
+                size="0.1">
                 <a-entity
                     id="vision{{id}}"
                     position="{{position}}"
