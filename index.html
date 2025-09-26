@@ -58,7 +58,7 @@
     <a-scene embedded
         arjs='trackingMethod: best; sourceType: webcam; sourceWidth: 1920;
         sourceHeight: 1080; frameRate: 60; displayWidth: window.innerWidth;
-        displayHeight: window.innerHeight; detectionMode: mono; matrixCodeType: 3x3;'
+        displayHeight: window.innerHeight; detectionMode: mono898; matrixCodeType: 3x3;'
         vr-mode-ui="enabled: false">
 
         <!--        Arm        -->
@@ -118,10 +118,6 @@
 
             const template = document.getElementById('marker-template').innerHTML;
 
-            let activeMarker = null;
-            let hideTimeout = null;
-
-
             const deviceState = {};
             devices.forEach(device => {
                 deviceState[device] = {
@@ -163,12 +159,13 @@
 
                         const state = deviceState[device];
 
+                        // No current Marker -> hideTimeout; 
                         if (state.hideTimeout) {
                             clearTimeout(state.hideTimeout);
                             state.hideTimeout = null;
                         }
 
-                        state.currentMarker = markerEl;
+                        if(!state.currentMarker) state.currentMarker = markerEl;
 
                         updateDeviceModel(device);
                     });
