@@ -165,8 +165,7 @@
                             state.hideTimeout = null;
                         }
 
-                        if(!state.currentMarker) state.currentMarker = markerEl;
-
+                        state.currentMarker = markerEl;
                         updateDeviceModel(device);
                     });
 
@@ -178,6 +177,7 @@
                             state.hideTimeout = setTimeout(() => {
                                 modelEl.setAttribute('visible', false);
                                 state.currentMarker = null;
+                                state.hideTimeout = null;
                             }, 2000);
                         }
                     });
